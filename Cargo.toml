@@ -1,5 +1,5 @@
 [package]
-name = "y-gui"
+name = "y_gui"
 version = "0.1.0"
 authors = ["Kiley Owen <yelikdev@gmail.com>"]
 

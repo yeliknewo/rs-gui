@@ -34,6 +34,58 @@ impl Keyboard {
     }
 }
 
+pub struct GUI {
+    keyboard : Keyboard,
+    facade : GlutinFacade,
+    program : glium::Program,
+}
+
+impl GUI {
+    pub fn new() -> GUI {
+        let facade: GlutinFacade =  match glium::glutin::WindowBuilder::new()
+            .with_dimensions(640, 480)
+            .with_title("GUI".to_string())
+            .with_gl(glium::glutin::GlRequest::Latest)
+            .with_gl_profile(glium::glutin::GlProfile::Core)
+            .with_gl_robustness(glium::glutin::Robustness::NotRobust)
+            .build_glium() {
+                Ok(facade) => facade,             //glium::backend_::glutin_backend::GlutinFacade
+                Err(error) => panic!(error),    //glium::glutin::GliumCreationError<glium::glutin::CreationError>
+            };
+
+        let program : glium::Program = match glium::Program::from_source(
+            &facade,
+            r#"
+                #version 140
+
+                in vec2 position;
+
+                void main() {
+                    gl_Position = vec4(position, 0.0, 1.0);
+                }
+            "#,
+            r#"
+                #version 140
+
+                out vec4 color;
+
+                void main() {
+                    color = vec4(1.0, 0.0, 0.0, 1.0);
+                }
+            "#,
+            None) {
+                Ok(program) => program,
+                Err(error) => panic!(error),
+            };
+
+        GUI{
+            keyboard : Keyboard::new(),
+            facade : facade,
+            program : program,
+        }
+    }
+}
+
 fn main() {
     let mut width : u32 = 640;
     let mut height : u32 = 480;
